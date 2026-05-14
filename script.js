@@ -4,7 +4,6 @@ const IMG = 'https://image.tmdb.org/t/p/w500';
 
 window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').style.display = 'none', 1000));
 
-// --- LOAD CONTENT ---
 document.addEventListener('DOMContentLoaded', () => {
     fetchContent(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`, 'movie-grid', 'movie');
     fetchContent(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}`, 'tv-grid', 'tv');
@@ -14,13 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchContent(url, gridId, type) {
     const res = await fetch(url);
     const data = await res.json();
-    document.getElementById(gridId).innerHTML = data.results.slice(0, 15).map(item => `
+    document.getElementById(gridId).innerHTML = data.results.slice(0, 10).map(item => `
         <div class="movie-card" onclick="initiateStream('${item.id}', '${(item.title || item.name).replace(/'/g, "\\'")}', '${type}')">
-            <img src="${item.poster_path ? IMG + item.poster_path : 'https://via.placeholder.com/200x300?text=No+Poster'}">
+            <img src="${item.poster_path ? IMG + item.poster_path : 'https://via.placeholder.com/200x300'}">
         </div>`).join('');
 }
 
-// --- HERO BANNER ---
 async function fetchHero() {
     const res = await fetch(`${BASE_URL}/trending/movie/day?api_key=${API_KEY}`);
     const data = await res.json();
@@ -30,28 +28,26 @@ async function fetchHero() {
     document.getElementById('hero-play').onclick = () => initiateStream(h.id, h.title, 'movie');
 }
 
-// --- FIXED SEARCH LOGIC ---
 async function searchMovies() {
     const query = document.getElementById('searchInput').value.trim();
     if (!query) return;
 
     document.getElementById('main-section-title').innerText = `Search: "${query}"`;
-    document.getElementById('tv-grid').parentElement.classList.add('hidden'); // Hide TV section
-    document.getElementById('hero-banner').classList.add('hidden'); // Hide Hero
+    document.getElementById('tv-header').style.display = 'none';
+    document.getElementById('tv-grid').innerHTML = '';
+    document.getElementById('hero-banner').style.display = 'none';
     
     const grid = document.getElementById('movie-grid');
     grid.innerHTML = '<p>Searching...</p>';
 
     const res = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}`);
     const data = await res.json();
-    
-    grid.innerHTML = data.results.length > 0 ? data.results.map(movie => `
-        <div class="movie-card" onclick="initiateStream('${movie.id}', '${movie.title.replace(/'/g, "\\'")}', 'movie')">
-            <img src="${movie.poster_path ? IMG + movie.poster_path : 'https://via.placeholder.com/200x300?text=No+Poster'}">
+    grid.innerHTML = data.results.length > 0 ? data.results.slice(0, 15).map(m => `
+        <div class="movie-card" onclick="initiateStream('${m.id}', '${m.title.replace(/'/g, "\\'")}', 'movie')">
+            <img src="${m.poster_path ? IMG + m.poster_path : 'https://via.placeholder.com/200x300'}">
         </div>`).join('') : '<p>No results found.</p>';
 }
 
-// --- STREAMING LOGIC ---
 async function initiateStream(id, title, type) {
     window.currentId = id; window.currentType = type; window.currentTitle = title;
     document.getElementById('playing-title').innerText = title;
@@ -85,8 +81,7 @@ function updateTvStream() {
 }
 
 function loadServer(num) {
-    const player = document.getElementById('video-player');
-    player.src = num === 1 ? `https://vidsrc.pm/embed/movie/${window.currentImdb}` : `https://vidsrc.xyz/embed/movie/${window.currentImdb}`;
+    document.getElementById('video-player').src = num === 1 ? `https://vidsrc.pm/embed/movie/${window.currentImdb}` : `https://vidsrc.xyz/embed/movie/${window.currentImdb}`;
 }
 
 function closePlayer() { 
