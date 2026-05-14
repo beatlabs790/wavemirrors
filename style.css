@@ -1,68 +1,48 @@
-:root {
-    --accent: #00d2ff;
-    --glass: rgba(255, 255, 255, 0.05);
-    --border: rgba(255, 255, 255, 0.1);
-}
+:root { --accent: #00d2ff; --bg: #050505; --glass: rgba(255,255,255,0.05); }
+body { background: var(--bg); color: white; font-family: 'Poppins', sans-serif; margin: 0; overflow-x: hidden; }
 
-body {
-    background: #050505; color: white; font-family: 'Poppins', sans-serif;
-    margin: 0; overflow-x: hidden;
-}
-
-/* Loader */
-#loader {
-    position: fixed; inset: 0; background: #000; z-index: 9999;
-    display: flex; justify-content: center; align-items: center; transition: 0.5s;
-}
-.spinner {
-    width: 40px; height: 40px; border: 3px solid var(--accent);
-    border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;
-}
+/* Loader & Insta */
+#loader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; transition: 0.5s; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+.insta-float { position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); padding: 10px 18px; border-radius: 50px; color: white; text-decoration: none; font-weight: 600; font-size: 11px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
-/* Insta Button */
-.insta-float { 
-    position: fixed; bottom: 20px; right: 20px; z-index: 1000;
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    padding: 10px 18px; border-radius: 50px; color: white;
-    text-decoration: none; font-weight: 600; font-size: 11px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-
-/* Nav & Layout */
-.glass-nav {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 5%; background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(15px); border-bottom: 1px solid var(--border);
-    position: sticky; top: 0; z-index: 100;
-}
+/* Nav & Genre Bar */
+.glass-nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 100; }
+.logo { font-size: 1.5rem; font-weight: bold; }
 .logo span { color: var(--accent); }
+.glass-nav input { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 20px; outline: none; }
+
+.genre-bar { display: flex; overflow-x: auto; padding: 15px 5%; gap: 10px; background: #0a0a0a; white-space: nowrap; scrollbar-width: none; }
+.genre-bar::-webkit-scrollbar { display: none; }
+.genre-bar button { background: var(--glass); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+.genre-bar button:hover { background: var(--accent); color: black; }
+
+/* Hero Section */
+.hero { height: 60vh; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 5%; position: relative; }
+.hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 0%, transparent 100%); }
+.hero-content { position: relative; z-index: 10; max-width: 600px; }
+.hero h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); }
+.hero p { font-size: 0.9rem; color: #ccc; margin-bottom: 20px; }
+.btn-primary { background: var(--accent); color: black; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
 
 /* Grids */
-.movie-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 15px; padding: 15px 5%;
-}
-@media (min-width: 768px) {
-    .movie-grid { grid-template-columns: repeat(5, 1fr); }
-}
-
-.movie-card {
-    border-radius: 12px; overflow: hidden; position: relative;
-    cursor: pointer; transition: 0.3s;
-}
+.container { padding: 20px 5%; }
+.movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-bottom: 30px; }
+.movie-card { border-radius: 10px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; }
 .movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
-.movie-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,210,255,0.3); }
+.movie-card:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,210,255,0.3); }
 
-/* Player UI */
-.glass-card { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 15px; padding: 15px; margin: 20px 5%; }
-.iframe-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 10px; overflow: hidden; }
+/* --- FIXED PLAYER MODAL --- */
+#player-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); }
+#player-modal.hidden { display: none; }
+.player-container { width: 100%; max-width: 900px; background: #111; border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.player-header { display: flex; justify-content: space-between; padding: 15px 20px; background: #1a1a1a; }
+.player-header h2 { font-size: 1.2rem; margin: 0; }
+.close-btn { background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold; }
+.iframe-container { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
 .iframe-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-.server-btns button {
-    background: var(--glass); border: 1px solid var(--border); color: white;
-    padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-right: 5px;
-}
-.server-btns .close { background: #ff4d4d; border: none; font-size: 1.2rem; }
-
-.hidden { display: none; }
+.player-footer { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1a1a1a; }
+.server-btns button { background: #333; border: none; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-left: 5px; }
+.server-btns button:hover { background: var(--accent); color: black; }
+#server-indicator { font-size: 0.8rem; color: #00ffcc; }
