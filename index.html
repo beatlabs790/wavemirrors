@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaveMirror | Premium</title>
+    <title>WaveMirror | Premium Streaming</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -14,35 +15,63 @@
     <!-- Insta Button -->
     <a href="https://instagram.com/_beat_labs" target="_blank" class="insta-float">@_beat_labs</a>
 
+    <!-- Fixed Glass Navbar -->
     <header class="glass-nav">
         <div class="logo">WAVE<span>MIRROR</span></div>
-        <input type="text" id="searchInput" placeholder="Search..." onkeypress="if(event.key==='Enter') searchMovies()">
+        <input type="text" id="searchInput" placeholder="Search movies..." onkeypress="if(event.key==='Enter') searchMovies()">
     </header>
 
-    <main class="container">
-        <!-- Player -->
-        <section id="player-wrapper" class="hidden glass-card">
-            <div class="iframe-container">
-                <iframe id="video-player" src="" allowfullscreen frameborder="0" referrerpolicy="origin"></iframe>
-            </div>
-            <div class="controls">
-                <h2 id="playing-title">Movie</h2>
-                <div class="server-btns">
-                    <button onclick="loadServer(1)">S1</button>
-                    <button onclick="loadServer(2)">S2</button>
-                    <button onclick="loadServer(3)">S3</button>
-                    <button onclick="closePlayer()" class="close">×</button>
-                </div>
-            </div>
-        </section>
+    <!-- Genre Filter Bar -->
+    <div class="genre-bar">
+        <button onclick="loadGenre(28)">Action</button>
+        <button onclick="loadGenre(35)">Comedy</button>
+        <button onclick="loadGenre(27)">Horror</button>
+        <button onclick="loadGenre(878)">Sci-Fi</button>
+        <button onclick="loadGenre(10749)">Romance</button>
+    </div>
 
-        <!-- Sections -->
-        <h2 class="section-label">Trending Now</h2>
+    <!-- Hero Section (Featured Movie) -->
+    <section id="hero-banner" class="hero">
+        <div class="hero-content">
+            <h1 id="hero-title">Loading...</h1>
+            <p id="hero-desc">Connecting to WaveMirror Nodes...</p>
+            <button id="hero-play" class="btn-primary">▶ Play Now</button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h2 id="main-section-title" class="section-label">Trending Now</h2>
         <div id="movie-grid" class="movie-grid"></div>
 
         <h2 class="section-label">Top Rated</h2>
         <div id="top-grid" class="movie-grid"></div>
     </main>
+
+    <footer class="glass-footer">
+        <p>Built with <span class="heart">❤</span> by <strong>BeatLabs</strong></p>
+    </footer>
+
+    <!-- FIXED CINEMATIC PLAYER MODAL -->
+    <div id="player-modal" class="hidden">
+        <div class="player-container glass-card">
+            <div class="player-header">
+                <h2 id="playing-title">Movie Title</h2>
+                <button onclick="closePlayer()" class="close-btn">&times;</button>
+            </div>
+            <div class="iframe-container">
+                <iframe id="video-player" src="" allowfullscreen frameborder="0" referrerpolicy="origin"></iframe>
+            </div>
+            <div class="player-footer">
+                <span id="server-indicator">Status: Ready</span>
+                <div class="server-btns">
+                    <button onclick="loadServer(1)">S1</button>
+                    <button onclick="loadServer(2)">S2</button>
+                    <button onclick="loadServer(3)">S3</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
