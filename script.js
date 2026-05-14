@@ -1,98 +1,56 @@
 const API_KEY = 'f22b8df492bf289db1c9aae5f5e3cc24';
 const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG_PATH = 'https://image.tmdb.org/t/p/w500';
-const BACKDROP_PATH = 'https://image.tmdb.org/t/p/original';
+const IMG = 'https://image.tmdb.org/t/p/w500';
 
-window.currentImdbId = ""; window.currentTmdbId = ""; window.currentTitle = "";
+window.addEventListener('load', () => setTimeout(() => document.getElementById('loader').style.display = 'none', 1000));
 
-// Loader
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-    }, 1000);
-});
-
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-    fetchHero();
-    fetchMovies(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`, 'movie-grid');
-    fetchMovies(`${BASE_URL}/movie/top_rated?api_key=${API_KEY}`, 'top-grid');
-});
-
-// Fetch Hero Banner
-async function fetchHero() {
-    const res = await fetch(`${BASE_URL}/trending/movie/day?api_key=${API_KEY}`);
-    const data = await res.json();
-    const heroMovie = data.results[0]; // Get the #1 movie
-
-    document.getElementById('hero-banner').style.backgroundImage = `url(${BACKDROP_PATH + heroMovie.backdrop_path})`;
-    document.getElementById('hero-title').innerText = heroMovie.title;
-    document.getElementById('hero-desc').innerText = heroMovie.overview.substring(0, 150) + "...";
-    
-    document.getElementById('hero-play').onclick = () => initiateStream(heroMovie.id, heroMovie.title);
-}
-
-// Fetch Grids
-async function fetchMovies(url, containerId) {
+async function fetchContent(url, gridId, type = 'movie') {
     const res = await fetch(url);
     const data = await res.json();
-    const container = document.getElementById(containerId);
+    document.getElementById(gridId).innerHTML = data.results.slice(0, 10).map(item => `
+        <div class="movie-card" onclick="initiateStream('${item.id}', '${(item.title || item.name).replace(/'/g, "\\'")}', '${type}')">
+            <img src="${IMG + item.poster_path}">
+        </div>`).join('');
+}
+
+fetchContent(`${BASE_URL}/trending/movie/week?api_key=${API_KEY}`, 'movie-grid', 'movie');
+fetchContent(`${BASE_URL}/trending/tv/week?api_key=${API_KEY}`, 'tv-grid', 'tv');
+
+async function initiateStream(id, title, type) {
+    window.currentId = id; window.currentType = type; window.currentTitle = title;
+    document.getElementById('playing-title').innerText = title;
     
-    container.innerHTML = data.results.slice(0, 15).map(movie => `
-        <div class="movie-card" onclick="initiateStream('${movie.id}', '${movie.title.replace(/'/g, "\\'")}')">
-            <img src="${IMG_PATH + movie.poster_path}" alt="${movie.title}">
-        </div>
-    `).join('');
-}
-
-// Genres & Search
-function loadGenre(genreId) {
-    fetchMovies(`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genreId}`, 'movie-grid');
-    document.getElementById('main-section-title').innerText = "Genre Results";
-    window.scrollTo({ top: document.getElementById('movie-grid').offsetTop - 100, behavior: 'smooth' });
-}
-
-function searchMovies() {
-    const q = document.getElementById('searchInput').value;
-    if(q) {
-        fetchMovies(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${q}`, 'movie-grid');
-        document.getElementById('main-section-title').innerText = `Search: ${q}`;
-    }
-}
-
-// --- FIXED PLAYER LOGIC ---
-async function initiateStream(tmdbId, title) {
-    const res = await fetch(`${BASE_URL}/movie/${tmdbId}/external_ids?api_key=${API_KEY}`);
-    const data = await res.json();
-    
-    window.currentTmdbId = tmdbId; window.currentTitle = title; window.currentImdbId = data.imdb_id;
-
-    if (window.currentImdbId || window.currentTmdbId) {
-        loadServer(1);
-        document.getElementById('player-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Prevents background scrolling!
+    if (type === 'tv') {
+        document.getElementById('tv-controls').classList.remove('hidden');
+        const res = await fetch(`${BASE_URL}/tv/${id}?api_key=${API_KEY}`);
+        const data = await res.json();
+        generateDropdowns(data.number_of_seasons);
+        updateTvStream();
     } else {
-        alert("Video source not found.");
+        document.getElementById('tv-controls').classList.add('hidden');
+        const res = await fetch(`${BASE_URL}/movie/${id}/external_ids?api_key=${API_KEY}`);
+        const data = await res.json();
+        window.currentImdb = data.imdb_id;
+        loadServer(1);
     }
+    document.getElementById('player-modal').classList.remove('hidden');
+}
+
+function generateDropdowns(seasons) {
+    const sSelect = document.getElementById('season-select');
+    sSelect.innerHTML = Array.from({length: seasons}, (_, i) => `<option value="${i+1}">Season ${i+1}</option>`).join('');
+    document.getElementById('episode-select').innerHTML = Array.from({length: 20}, (_, i) => `<option value="${i+1}">Ep ${i+1}</option>`).join('');
+}
+
+function updateTvStream() {
+    const s = document.getElementById('season-select').value;
+    const e = document.getElementById('episode-select').value;
+    document.getElementById('video-player').src = `https://vidsrc.pm/embed/tv/${window.currentId}/${s}-${e}`;
 }
 
 function loadServer(num) {
     const player = document.getElementById('video-player');
-    const sources = {
-        1: `https://vidsrc.pm/embed/movie/${window.currentImdbId}`,
-        2: `https://vidsrc.xyz/embed/movie/${window.currentImdbId}`,
-        3: `https://autoembed.to/movie/tmdb/${window.currentTmdbId}`
-    };
-
-    player.src = sources[num];
-    document.getElementById('playing-title').innerText = window.currentTitle;
-    document.getElementById('server-indicator').innerText = `Node: 0x${num} Active`;
+    player.src = num === 1 ? `https://vidsrc.pm/embed/movie/${window.currentImdb}` : `https://vidsrc.xyz/embed/movie/${window.currentImdb}`;
 }
 
-function closePlayer() {
-    document.getElementById('player-modal').classList.add('hidden');
-    document.getElementById('video-player').src = "";
-    document.body.style.overflow = 'auto'; // Restores background scrolling
-}
-
+function closePlayer() { document.getElementById('player-modal').classList.add('hidden'); document.getElementById('video-player').src = ""; }
