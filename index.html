@@ -3,52 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaveMirror | Experience Cinema</title>
+    <title>WaveMirror | Premium</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="background-glow"></div>
+    <!-- Loading Screen -->
+    <div id="loader"><div class="spinner"></div></div>
+
+    <!-- Insta Button -->
+    <a href="https://instagram.com/_beat_labs" target="_blank" class="insta-float">@_beat_labs</a>
 
     <header class="glass-nav">
         <div class="logo">WAVE<span>MIRROR</span></div>
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Search for movies...">
-            <button onclick="searchMovies()">Search</button>
-        </div>
+        <input type="text" id="searchInput" placeholder="Search..." onkeypress="if(event.key==='Enter') searchMovies()">
     </header>
 
     <main class="container">
-        <!-- Floating Glass Player -->
-        <section id="player-wrapper" class="hidden glass-card player-section">
+        <!-- Player -->
+        <section id="player-wrapper" class="hidden glass-card">
             <div class="iframe-container">
-                <iframe id="video-player" src="" allowfullscreen frameborder="0"></iframe>
+                <iframe id="video-player" src="" allowfullscreen frameborder="0" referrerpolicy="origin"></iframe>
             </div>
-            <div class="player-controls">
-                <h2 id="playing-title">Select a Movie</h2>
-                <div class="server-group">
-                    <button onclick="loadServer(1)" class="btn-glass">Server 1</button>
-                    <button onclick="loadServer(2)" class="btn-glass">Server 2</button>
-                    <button onclick="closePlayer()" class="btn-close">&times;</button>
+            <div class="controls">
+                <h2 id="playing-title">Movie</h2>
+                <div class="server-btns">
+                    <button onclick="loadServer(1)">S1</button>
+                    <button onclick="loadServer(2)">S2</button>
+                    <button onclick="loadServer(3)">S3</button>
+                    <button onclick="closePlayer()" class="close">×</button>
                 </div>
             </div>
         </section>
 
+        <!-- Sections -->
         <h2 class="section-label">Trending Now</h2>
-        <div id="movie-grid" class="movie-grid">
-            <!-- Movie cards inject here -->
-        </div>
+        <div id="movie-grid" class="movie-grid"></div>
+
+        <h2 class="section-label">Top Rated</h2>
+        <div id="top-grid" class="movie-grid"></div>
     </main>
-        <footer class="glass-footer">
-        <div class="footer-content">
-            <p>Built with <span class="heart">❤</span> by <strong>BeatLabs</strong></p>
-            <div class="footer-links">
-                <span>&copy; 2026 WaveMirror</span>
-            </div>
-        </div>
-    </footer>
-    
 
     <script src="script.js"></script>
 </body>
