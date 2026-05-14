@@ -12,20 +12,21 @@
 
     <header class="glass-nav">
         <div class="logo"><img src="https://i.ibb.co/HTGQy0yG/logo.png" alt="WaveMirror" style="height:35px;"></div>
-        <input type="text" id="searchInput" placeholder="Search..." onkeypress="if(event.key==='Enter') searchMovies()">
+        <input type="text" id="searchInput" placeholder="Search movies..." onkeypress="if(event.key==='Enter') searchMovies()">
     </header>
 
     <div class="genre-bar">
         <button onclick="loadGenre(28)">Action</button><button onclick="loadGenre(35)">Comedy</button>
-        <button onclick="loadGenre(27)">Horror</button><button onclick="loadGenre(878)">Sci-Fi</button>
+        <button onclick="loadGenre(27)">Horror</button>
     </div>
 
-    <section id="hero-banner" class="hero"><div class="hero-content"><h1 id="hero-title">Welcome</h1><button id="hero-play" class="btn-primary">▶ Play Now</button></div></section>
+    <section id="hero-banner" class="hero"><div class="hero-content"><h1 id="hero-title">Loading...</h1><button id="hero-play" class="btn-primary">▶ Play Now</button></div></section>
 
     <main class="container">
-        <h2 class="section-label">Trending Movies</h2>
+        <h2 id="main-section-title" class="section-label">Trending Movies</h2>
         <div id="movie-grid" class="movie-grid"></div>
-        <h2 class="section-label">Popular TV Shows</h2>
+        
+        <h2 id="tv-header" class="section-label">Popular TV Shows</h2>
         <div id="tv-grid" class="movie-grid"></div>
     </main>
 
